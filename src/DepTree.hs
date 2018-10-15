@@ -1,4 +1,7 @@
-module DepTree (getPaths, Tree) where
+module DepTree
+  ( getPaths
+  , Tree
+  ) where
 
 import           Data.List (findIndex, findIndices, foldl, foldl', foldr, map,
                             reverse, take)
@@ -10,26 +13,23 @@ type TreeItem = (Int, String)
 type Tree = [TreeItem]
 
 findItem :: Name -> Tree -> [Int]
-findItem n t = findIndices (\e -> (snd e) == n) t
+findItem name tree = findIndices (\e -> (snd e) == name) tree
 
 treesToItem :: Name -> Tree -> [Tree]
-treesToItem n t = do
-  case findItem n t of
+treesToItem name tree = do
+  case findItem name tree of
     []      -> []
-    indexes -> foldl' (\list n -> (take (n + 1) t) : list) [] indexes
+    indexes -> foldl' (\list n -> (take (n + 1) tree) : list) [] indexes
 
-rootPath :: Tree -> Tree
-rootPath t =
-  snd $
-  foldl'
-    (\acc@(level, list) item@(level', it) ->
-       if (level' < level || list == [])
-         then (level', item : list)
-         else acc)
-    (0, [])
-    t
+rootPath :: Tree -> [Name]
+rootPath tree = snd $ foldl' fun (0, []) tree
 
-getPaths :: Name -> Tree -> [Tree]
-getPaths n t = do
-  let trees = treesToItem n t
+fun :: (Int, [Name]) -> TreeItem -> (Int, [Name])
+fun acc@(level, names) item@(itemLevel, itemName)
+  | itemLevel < level || names == [] = (itemLevel, (itemName : names))
+  | otherwise = acc
+
+getPaths :: Name -> Tree -> [[Name]]
+getPaths name tree = do
+  let trees = treesToItem name tree
    in map (rootPath . reverse) trees
