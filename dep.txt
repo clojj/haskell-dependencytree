@@ -1,6 +1,9 @@
 com.example:producer:jar:0.0.1-SNAPSHOT
 +- org.springframework.cloud:spring-cloud-stream:jar:2.0.0.RC3:compile
 |  +- org.springframework.boot:spring-boot-starter-validation:jar:2.0.2.RELEASE:compile
-|  |  \- org.apache.tomcat.embed:tomcat-embed-el:jar:8.5.31:compile
+|  +- A
+|  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:8.5.31:compile
+|  |  |  \- C
 |  +- org.springframework:spring-messaging:jar:5.0.6.RELEASE:compile
-|  |  \- org.springframework:spring-beans:jar:5.0.6.RELEASE:compile
+|  +- C
+      \- org.springframework:spring-beans:jar:5.0.6.RELEASE:compile
