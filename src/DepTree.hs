@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 
 module DepTree
   ( getPaths
@@ -19,24 +18,24 @@ type TreeItem = (Int, T.Text)
 type Tree = [TreeItem]
 
 findItem :: Name -> Tree -> [Int]
-findItem name tree = findIndices (\e -> (snd e) == name) tree
+findItem name = findIndices (\e -> snd e == name)
 
 treesToItem :: Name -> Tree -> [Tree]
-treesToItem name tree = do
+treesToItem name tree =
   case findItem name tree of
     [] -> []
-    indexes -> foldl' (\list n -> (take (n + 1) tree) : list) [] indexes
+    indexes -> foldl' (\list n -> take (n + 1) tree : list) [] indexes
 
 rootPath :: Tree -> [Name]
 rootPath tree = snd $ foldl' fun (0, []) tree
 
 fun :: (Int, [Name]) -> TreeItem -> (Int, [Name])
 fun acc@(level, names) item@(itemLevel, itemName)
-  | itemLevel < level || names == [] = (itemLevel, (itemName : names))
+  | itemLevel < level || null names = (itemLevel, itemName : names)
   | otherwise = acc
 
 getPaths :: Name -> Tree -> [[Name]]
-getPaths name tree = do
+getPaths name tree =
   let trees = treesToItem name tree
    in map (rootPath . reverse) trees
 

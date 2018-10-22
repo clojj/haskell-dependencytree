@@ -33,25 +33,25 @@ depTxtTree =
 
 spec :: Spec
 spec = do
-  describe "file to Tree" $ do
+  describe "file to Tree" $
     it "read file dep.txt and create Tree" $ do
       tree <- toTree "dep.txt"
       tree `shouldBe` depTxtTree
   describe "getPath" $ do
-    it "all paths (from root) to node '2A'" $ do getPaths "2A" testTree `shouldBe` [["0", "1A", "2A"]]
-    it "all paths (from root) to node '3x'" $ do
+    it "all paths (from root) to node '2A'" $ getPaths "2A" testTree `shouldBe` [["0", "1A", "2A"]]
+    it "all paths (from root) to node '3x'" $
       getPaths "3x" testTree `shouldBe` [["0", "1B", "3x"], ["0", "1A", "2A", "3x"]]
-    it "get path to node 'C'" $ do
+    it "get path to node 'C'" $
       getPaths "C" depTxtTree `shouldBe`
-        [ [ "com.example:producer:jar:0.0.1-SNAPSHOT"
-          , "org.springframework.cloud:spring-cloud-stream:jar:2.0.0.RC3:compile"
-          , "C"
-          ]
-        , [ "com.example:producer:jar:0.0.1-SNAPSHOT"
-          , "org.springframework.cloud:spring-cloud-stream:jar:2.0.0.RC3:compile"
-          , "A"
-          , "org.apache.tomcat.embed:tomcat-embed-el:jar:8.5.31:compile"
-          , "C"
-          ]
+      [ [ "com.example:producer:jar:0.0.1-SNAPSHOT"
+        , "org.springframework.cloud:spring-cloud-stream:jar:2.0.0.RC3:compile"
+        , "C"
         ]
-    it "no paths" $ do getPaths "42" testTree `shouldBe` []
+      , [ "com.example:producer:jar:0.0.1-SNAPSHOT"
+        , "org.springframework.cloud:spring-cloud-stream:jar:2.0.0.RC3:compile"
+        , "A"
+        , "org.apache.tomcat.embed:tomcat-embed-el:jar:8.5.31:compile"
+        , "C"
+        ]
+      ]
+    it "no paths" $ getPaths "42" testTree `shouldBe` []
