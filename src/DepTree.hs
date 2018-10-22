@@ -1,7 +1,7 @@
 
 module DepTree
   ( getPaths
-  , toTree
+  , fileToTree
   , Tree
   ) where
 
@@ -13,12 +13,15 @@ import Data.Char (isAlpha)
 
 type Name = T.Text
 
-type TreeItem = (Int, T.Text)
+type TreeItem = (Int, T.Text, T.Text)
 
 type Tree = [TreeItem]
 
+type ResultItem = (Name, Int, T.Text)
+
+
 findItem :: Name -> Tree -> [Int]
-findItem name = findIndices (\e -> snd e == name)
+findItem name = findIndices (\(_, itemname, _) -> itemname == name)
 
 treesToItem :: Name -> Tree -> [Tree]
 treesToItem name tree =
@@ -26,21 +29,21 @@ treesToItem name tree =
     [] -> []
     indexes -> foldl' (\list n -> take (n + 1) tree : list) [] indexes
 
-rootPath :: Tree -> [Name]
+rootPath :: Tree -> [ResultItem]
 rootPath tree = snd $ foldl' fun (0, []) tree
 
-fun :: (Int, [Name]) -> TreeItem -> (Int, [Name])
-fun acc@(level, names) item@(itemLevel, itemName)
-  | itemLevel < level || null names = (itemLevel, itemName : names)
+fun :: (Int, [ResultItem]) -> TreeItem -> (Int, [ResultItem])
+fun acc@(level, names) item@(itemLevel, itemName, itemLine)
+  | itemLevel < level || null names = (itemLevel, (itemName, itemLevel, itemLine) : names)
   | otherwise = acc
 
-getPaths :: Name -> Tree -> [[Name]]
+getPaths :: Name -> Tree -> [[ResultItem]]
 getPaths name tree =
   let trees = treesToItem name tree
    in map (rootPath . reverse) trees
 
-toTree :: FilePath -> IO Tree
-toTree file = do
+fileToTree :: FilePath -> IO Tree
+fileToTree file = do
   content <- TIO.readFile file
   let lines = T.lines content
    in return $ map lineToTreeItem lines
@@ -48,4 +51,4 @@ toTree file = do
 lineToTreeItem :: T.Text -> TreeItem
 lineToTreeItem line =
   let (pre, post) = T.break isAlpha line
-   in (T.length pre, post)
+   in (T.length pre, post, line)
