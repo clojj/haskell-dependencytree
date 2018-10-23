@@ -1,3 +1,3 @@
 # haskell-dependencytree
 
-add description of haskell-dependencytree here
+start ghcid with `ghcid --command "stack ghci haskell-dependencytree"`

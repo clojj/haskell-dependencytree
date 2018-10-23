@@ -1,23 +1,23 @@
-
 module DepTree
   ( getPaths
   , fileToTree
   , Tree
   ) where
 
-import Data.List (findIndex, findIndices, foldl, foldl', foldr, map, reverse, take)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import           Data.List    (findIndices, foldl', map, reverse, take)
+import           Data.Text    (Text (..), break, length, lines)
+import           Data.Text.IO (readFile)
+import           Prelude      hiding (break, length, lines, readFile)
 
-import Data.Char (isAlpha)
+import           Data.Char    (isAlpha)
 
-type Name = T.Text
+type Name = Text
 
-type TreeItem = (Int, T.Text, T.Text)
+type TreeItem = (Int, Text, Text)
 
 type Tree = [TreeItem]
 
-type ResultItem = (Name, Int, T.Text)
+type ResultItem = (Name, Int, Text)
 
 
 findItem :: Name -> Tree -> [Int]
@@ -26,7 +26,7 @@ findItem name = findIndices (\(_, itemname, _) -> itemname == name)
 treesToItem :: Name -> Tree -> [Tree]
 treesToItem name tree =
   case findItem name tree of
-    [] -> []
+    []      -> []
     indexes -> foldl' (\list n -> take (n + 1) tree : list) [] indexes
 
 rootPath :: Tree -> [ResultItem]
@@ -44,11 +44,11 @@ getPaths name tree =
 
 fileToTree :: FilePath -> IO Tree
 fileToTree file = do
-  content <- TIO.readFile file
-  let lines = T.lines content
-   in return $ map lineToTreeItem lines
+  content <- readFile file
+  let ls = lines content
+   in return $ map lineToTreeItem ls
 
-lineToTreeItem :: T.Text -> TreeItem
+lineToTreeItem :: Text -> TreeItem
 lineToTreeItem line =
-  let (pre, post) = T.break isAlpha line
-   in (T.length pre, post, line)
+  let (pre, post) = break isAlpha line
+   in (length pre, post, line)
