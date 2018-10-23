@@ -3,8 +3,9 @@
 module Main where
 
 import           Control.Monad
-import           Data.Text     (unpack)
+import           Data.Text     (unlines, unpack)
 import           DepTree       (Tree, getPaths)
+import           Prelude       hiding (unlines)
 
 testTree :: Tree
 testTree =
@@ -18,13 +19,8 @@ testTree =
   ]
 
 main :: IO ()
-main =
-  forM_
-    outputPaths
-    (\lines -> do
-       putStrLn ""
-       forM_ lines putStrLn)
+main = forM_ outputPaths (putStrLn . unpack)
   where
     paths = getPaths "3x" testTree
     outputPaths = outputPath <$> paths
-    outputPath resultItems = [unpack line | (_, _, line) <- resultItems]
+    outputPath resultItems = unlines [line | (_, _, line) <- resultItems]
