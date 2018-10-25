@@ -33,8 +33,8 @@ rootPath :: Tree -> [ResultItem]
 rootPath tree = snd $ foldl' fun (0, []) tree
 
 fun :: (Int, [ResultItem]) -> TreeItem -> (Int, [ResultItem])
-fun acc@(level, names) item@(itemLevel, itemName, itemLine)
-  | itemLevel < level || null names = (itemLevel, (itemName, itemLevel, itemLine) : names)
+fun acc@(level, resultItems) treeItem@(itemLevel, itemName, itemLine)
+  | itemLevel < level || null resultItems = (itemLevel, (itemName, itemLevel, itemLine) : resultItems)
   | otherwise = acc
 
 getPaths :: Name -> Tree -> [[ResultItem]]
